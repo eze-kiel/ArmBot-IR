@@ -34,6 +34,7 @@ void loop() {
   if (irrecv.decode(&results)) {
     Serial.println(results.value, DEC);
     valeurTel = results.value;
+    //do{
 
     switch (results.value)
     {
@@ -74,6 +75,7 @@ void loop() {
         break;
 
     }
+    //}while(valeur == 4294967295);
 
     if (positionServo > 85 || positionServo < 78)
     {
