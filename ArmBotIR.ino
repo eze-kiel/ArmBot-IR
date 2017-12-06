@@ -5,7 +5,7 @@ Servo servo1;
 //Servo servo2;
 
 signed short positionServo = 90;
-signed short valeurTel;
+signed short ancienneVal = 0;
 
 int RECV_PIN = 11;
 IRrecv irrecv(RECV_PIN);
@@ -33,8 +33,24 @@ void loop() {
   delay(800);
   if (irrecv.decode(&results)) {
     Serial.println(results.value, DEC);
-    valeurTel = results.value;
-    //do{
+
+    while (results.value == 4294967295)
+    {
+      if (ancienneVal == 1)
+      {
+        positionServo = positionServo + 1;
+        servo1.write(positionServo);
+      }
+      else if (ancienneVal == 2)
+      {
+        positionServo = positionServo - 1;
+        servo1.write(positionServo);
+      }
+      else if (ancienneVal == 0)
+      {
+        break;
+      }
+    }
 
     switch (results.value)
     {
@@ -43,11 +59,13 @@ void loop() {
         Serial.println("left");
         positionServo = positionServo + 10;
         servo1.write(positionServo);
+        ancienneVal = 1;
         break;
       case 16720605:
         Serial.println("left");
         positionServo = positionServo + 10;
         servo1.write(positionServo);
+        ancienneVal = 1;
         break;
 
       //RIGHT
@@ -55,27 +73,32 @@ void loop() {
         Serial.println("right");
         positionServo = positionServo - 10;
         servo1.write(positionServo);
+        ancienneVal = 2;
         break;
       case 16761405:
         Serial.println("right");
         positionServo = positionServo - 10;
         servo1.write(positionServo);
+        ancienneVal = 2;
         break;
 
       //INIT
-      case 3622325019:
+      case 3810010651:
         Serial.println("reset position");
         servo1.write(81);
         positionServo = 81;
         break;
-      case 16712445:
+      case 16753245:
         Serial.println("reset position");
         servo1.write(81);
         positionServo = 81;
         break;
 
+      default:
+        break;
+
     }
-    //}while(valeur == 4294967295);
+
 
     if (positionServo > 85 || positionServo < 78)
     {
